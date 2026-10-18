@@ -1,0 +1,13 @@
+{
+  "Name": "SpatialAim",
+  "Owner": "TheFantasticLoki",
+  "Description": "Configurable pressure, speed, flick, and tablet-space coordinate filters for OpenTabletDriver relative aiming.",
+  "PluginVersion": "0.1.0.0",
+  "SupportedDriverVersion": "0.6.7.0",
+  "RepositoryUrl": "https://github.com/TheFantasticLoki/OTD-Plugin-Suite",
+  "DownloadUrl": "https://github.com/TheFantasticLoki/OTD-Plugin-Suite/releases/download/0.1.0.0/SpatialAim.Filters.zip",
+  "CompressionFormat": "zip",
+  "SHA256": "REPLACE_WITH_SHA256_OF_RELEASE_ARCHIVE",
+  "WikiUrl": "https://github.com/TheFantasticLoki/OTD-Plugin-Suite/blob/main/docs/README.md",
+  "LicenseIdentifier": "MIT"
+}

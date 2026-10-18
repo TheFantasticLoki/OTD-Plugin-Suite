@@ -1,0 +1,57 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "SpatialAim: Restore",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["restore", "SpatialAim.Filters.sln"],
+      "problemMatcher": []
+    },
+    {
+      "label": "SpatialAim: Test",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["test", "SpatialAim.Filters.sln", "--configuration", "Release"],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "SpatialAim: Build Debug",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["build", "SpatialAim.Filters.sln", "--configuration", "Debug"],
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    },
+    {
+      "label": "SpatialAim: Build Release",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["build", "SpatialAim.Filters.sln", "--configuration", "Release"],
+      "problemMatcher": "$msCompile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "SpatialAim: Clean",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["clean", "SpatialAim.Filters.sln"],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "SpatialAim: Package Release ZIP",
+      "type": "shell",
+      "command": "mkdir -p artifacts && zip -j -FS artifacts/SpatialAim.Filters.zip src/SpatialAim.Filters/bin/Release/net8.0/SpatialAim.Filters.dll",
+      "dependsOn": "SpatialAim: Build Release",
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    }
+  ]
+}
