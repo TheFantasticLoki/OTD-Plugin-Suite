@@ -38,3 +38,5 @@ In VS Code, open **Terminal > Run Task** and choose a `SpatialAim:` task for res
 Speed is measured in post-transform relative output units per second, so thresholds depend on Relative Output Mode sensitivity and report timing. The EPP filter is deliberately described as an approximation. Tablet Mapping does not infer your ideal arm curve; calibrate its grid from repeatable movements. No filter can guarantee a specific turn angle such as 180 degrees; game sensitivity, input handling, mapping, and stroke speed all matter.
 
 OTD Plugin-Repository metadata is provided as [a template](plugin-metadata.template.json). Replace its marked publication fields after the GitHub repository and release archive exist. The project uses the [MIT license](LICENSE). Filter defaults are declared explicitly for OTD's settings store; the warp strength starts at 0 intentionally so the filter is neutral until calibrated.
+
+GPT-6 was used to create this plugin suite.
