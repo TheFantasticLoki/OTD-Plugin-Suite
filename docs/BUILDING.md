@@ -23,36 +23,50 @@ The plugin assembly is produced at:
 src/SpatialAim.Filters/bin/Release/net8.0/SpatialAim.Filters.dll
 ```
 
-The automated tests cover plugin registration and pipeline stages, explicit OTD property defaults, pressure and speed curve endpoints, interpolation, exponent behavior, response inversion, degenerate thresholds, and 2D tablet-map interpolation and correction behavior.
+## Localized builds
+
+OTD 0.6.7 reads plugin names, setting labels, and tooltips from fixed attribute strings. Select the language at build time with `SpatialAimLocale`; the default is English (`en`). Supported values are `en`, `es`, `ja`, `zh-CN`, `ko`, `de`, `pl`, and `fr`.
+
+For example, build a French plugin with:
+
+```sh
+dotnet build src/SpatialAim.Filters/SpatialAim.Filters.csproj -c Release -p:SpatialAimLocale=fr
+```
+
+The translation catalog is embedded in the plugin DLL, so installation remains a single-file copy. Replace the installed DLL with the build for the desired locale and restart OTD to switch languages. Unsupported locale values fail the build.
+
+The automated tests cover plugin registration and pipeline stages, localized plugin metadata and catalog entries, explicit OTD property defaults, pressure and speed curve endpoints, interpolation, exponent behavior, response inversion, degenerate thresholds, and 2D tablet-map interpolation and correction behavior.
 
 ## GitHub Actions and branches
 
-`.github/workflows/ci-release.yml` runs restore, tests, Release build, and ZIP packaging on pushes to `dev` and `release`, and on pull requests targeting either branch. Every successful run uploads a 14-day build artifact. A Git tag such as `v0.1.0.0` publishes a GitHub release with the plugin ZIP, generated OTD metadata, and archive SHA-256, but only if the tagged commit is on `release`.
+`.github/workflows/ci-release.yml` runs tests and builds/packages all eight locales on pushes to `Dev`, `Release`, `dev`, `release`, or `main`, and on pull requests targeting those branches. Every successful run uploads a 14-day artifact containing one ZIP per locale. A pushed Git tag such as `v1.0.1` publishes all locale ZIPs, generated OTD metadata, and checksums, but only if its commit is already on the remote `Release` or `release` branch.
 
-This workspace is not currently initialized as a Git repository, so the branches cannot be created here. After initializing/pushing the repository, create the branches on the remote with:
-
-```sh
-git switch -c dev
-git push -u origin dev
-git switch -c release
-git push -u origin release
-git switch dev
-```
-
-Keep day-to-day work on `dev`. Merge tested changes into `release`, then create and push a version tag from that branch to publish:
+Tags created in VS Code are local until pushed. Push the release branch first, then push the version tag to trigger the release workflow:
 
 ```sh
-git switch release
-git merge --no-ff dev
-git tag v0.1.0.0
-git push origin release --tags
+git push origin Release
+git push origin v1.0.1
 ```
 
-Use a new four-part version for each release tag and keep `plugin-metadata.template.json`'s repository owner and URLs accurate before publishing.
+Branch names are case-sensitive. This repository uses `Dev` and `Release`; if the tag is pushed before its commit is on `Release`, the workflow rejects it. A branch push alone does not push a local tag. Do not reuse an existing version tag; create a new version after pushing the release changes. The `v1.0.0` tag already exists remotely, so subsequent releases should use a newer version.
+
+Use **Terminal > Run Task > SpatialAim: Build All Locales** to test each locale and create local ZIPs under `artifacts/`. The English ZIP is `artifacts/SpatialAim.Filters.zip`; other ZIPs include their locale code. The task leaves the standard build output in English.
+
+To merge and tag a release:
+
+```sh
+git switch Release
+git merge --no-ff Dev
+git tag v1.0.1
+git push origin Release
+git push origin v1.0.1
+```
+
+Use a new version for each release tag and keep `plugin-metadata.template.json`'s repository owner and URLs accurate before publishing.
 
 ## VS Code tasks
 
-Use **Terminal > Run Task** for `SpatialAim: Restore`, `SpatialAim: Test`, `SpatialAim: Build Debug`, `SpatialAim: Build Release`, `SpatialAim: Clean`, and `SpatialAim: Package Release ZIP`. The package task uses `zip` and requires it on `PATH`.
+Use **Terminal > Run Task** for `SpatialAim: Restore`, `SpatialAim: Test`, `SpatialAim: Build Debug`, `SpatialAim: Build Release`, `SpatialAim: Build All Locales`, `SpatialAim: Clean`, and `SpatialAim: Package Release ZIP`. The locale task uses Python 3's standard library for ZIP creation; the single-locale package task uses `zip` on `PATH`.
 
 ## Prepare a release and OTD metadata
 

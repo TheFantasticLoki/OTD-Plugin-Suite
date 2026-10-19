@@ -5,6 +5,7 @@ using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 using SpatialAim.Filters.Curves;
 using SpatialAim.Filters.Filters;
+using SpatialAim.Filters.Localization;
 using System.Numerics;
 using Xunit;
 
@@ -13,10 +14,10 @@ namespace SpatialAim.Filters.Tests;
 public sealed class CurveMathTests
 {
     [Theory]
-    [InlineData(typeof(PressureSensitivityFilter), "SpatialAim Pressure Sensitivity", PipelinePosition.PostTransform)]
-    [InlineData(typeof(WindowsEppApproximationFilter), "SpatialAim Windows EPP Approximation", PipelinePosition.PostTransform)]
-    [InlineData(typeof(FlickAccelerationFilter), "SpatialAim Flick Acceleration", PipelinePosition.PostTransform)]
-    [InlineData(typeof(TabletSpaceWarpFilter), "SpatialAim Tablet Mapping", PipelinePosition.PreTransform)]
+    [InlineData(typeof(PressureSensitivityFilter), LocalizedPluginNames.Pressure, PipelinePosition.PostTransform)]
+    [InlineData(typeof(WindowsEppApproximationFilter), LocalizedPluginNames.Epp, PipelinePosition.PostTransform)]
+    [InlineData(typeof(FlickAccelerationFilter), LocalizedPluginNames.Flick, PipelinePosition.PostTransform)]
+    [InlineData(typeof(TabletSpaceWarpFilter), LocalizedPluginNames.Mapping, PipelinePosition.PreTransform)]
     public void FiltersAreNamedAtTheirExpectedPipelineStage(
         Type filterType,
         string expectedName,
@@ -36,7 +37,7 @@ public sealed class CurveMathTests
         var bindingType = typeof(TabletMappingCalibrationBinding);
         var pluginName = bindingType.GetCustomAttribute<PluginNameAttribute>();
 
-        Assert.Equal("SpatialAim Calibration Toggle", pluginName?.Name);
+        Assert.Equal(LocalizedPluginNames.Calibration, pluginName?.Name);
         Assert.IsAssignableFrom<IStateBinding>(Activator.CreateInstance(bindingType));
     }
 

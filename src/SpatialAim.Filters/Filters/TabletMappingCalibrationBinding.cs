@@ -3,10 +3,11 @@ using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Tablet;
 using SpatialAim.Filters.Curves;
+using SpatialAim.Filters.Localization;
 
 namespace SpatialAim.Filters.Filters;
 
-[PluginName("SpatialAim Calibration Toggle")]
+[PluginName(LocalizedPluginNames.Calibration)]
 public sealed class TabletMappingCalibrationBinding : IStateBinding
 {
     public void Press(TabletReference tablet, IDeviceReport report)

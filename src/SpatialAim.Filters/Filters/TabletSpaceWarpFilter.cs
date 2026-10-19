@@ -4,10 +4,11 @@ using OpenTabletDriver.Plugin.Attributes;
 using OpenTabletDriver.Plugin.Output;
 using OpenTabletDriver.Plugin.Tablet;
 using SpatialAim.Filters.Curves;
+using SpatialAim.Filters.Localization;
 
 namespace SpatialAim.Filters.Filters;
 
-[PluginName("SpatialAim Tablet Mapping")]
+[PluginName(LocalizedPluginNames.Mapping)]
 public sealed class TabletSpaceWarpFilter : IPositionedPipelineElement<IDeviceReport>
 {
     private const string NeutralCorrectionSamples = "0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0";
@@ -59,63 +60,63 @@ public sealed class TabletSpaceWarpFilter : IPositionedPipelineElement<IDeviceRe
         }
     }
 
-    [SliderProperty("Digitizer maximum X", 1f, 1048575f, 65535f)]
+    [LocalizedSliderProperty("mapping.maxX", 1f, 1048575f, 65535f)]
     [DefaultPropertyValue(65535f)]
-    [ToolTip("Open OTD's Tablet Debugger and move the pen around the tablet edges/corners. Enter the largest raw X value shown; use the full digitizer maximum, not the active-area width.")]
+    [LocalizedToolTip("mapping.maxX.tip")]
     public float DigitizerMaximumX
     {
         get => digitizerMaximumX;
         set => digitizerMaximumX = float.IsFinite(value) ? Math.Clamp(value, 1f, 1048575f) : 65535f;
     }
 
-    [SliderProperty("Digitizer maximum Y", 1f, 1048575f, 65535f)]
+    [LocalizedSliderProperty("mapping.maxY", 1f, 1048575f, 65535f)]
     [DefaultPropertyValue(65535f)]
-    [ToolTip("Open OTD's Tablet Debugger and move the pen around the tablet edges/corners. Enter the largest raw Y value shown; use the full digitizer maximum, not the active-area height.")]
+    [LocalizedToolTip("mapping.maxY.tip")]
     public float DigitizerMaximumY
     {
         get => digitizerMaximumY;
         set => digitizerMaximumY = float.IsFinite(value) ? Math.Clamp(value, 1f, 1048575f) : 65535f;
     }
 
-    [SliderProperty("Mapping center X (%)", 0f, 100f, 50f)]
+    [LocalizedSliderProperty("mapping.centerX", 0f, 100f, 50f)]
     [DefaultPropertyValue(50f)]
-    [ToolTip("Horizontal pivot for overall X scaling, as a percentage of the full digitizer range. The default keeps the tablet center fixed while scaling.")]
+    [LocalizedToolTip("mapping.centerX.tip")]
     public float MappingCenterXPercent
     {
         get => mappingCenterXPercent;
         set => mappingCenterXPercent = float.IsFinite(value) ? Math.Clamp(value, 0f, 100f) : 50f;
     }
 
-    [SliderProperty("Mapping center Y (%)", 0f, 100f, 50f)]
+    [LocalizedSliderProperty("mapping.centerY", 0f, 100f, 50f)]
     [DefaultPropertyValue(50f)]
-    [ToolTip("Vertical pivot for overall Y scaling, as a percentage of the full digitizer range. The default keeps the tablet center fixed while scaling.")]
+    [LocalizedToolTip("mapping.centerY.tip")]
     public float MappingCenterYPercent
     {
         get => mappingCenterYPercent;
         set => mappingCenterYPercent = float.IsFinite(value) ? Math.Clamp(value, 0f, 100f) : 50f;
     }
 
-    [SliderProperty("Horizontal map scale", 0.5f, 1.5f, 1f)]
+    [LocalizedSliderProperty("mapping.scaleX", 0.5f, 1.5f, 1f)]
     [DefaultPropertyValue(1f)]
-    [ToolTip("Overall X mapping scale around Mapping center X. 1 is unchanged; above 1 expands horizontal travel and below 1 compresses it.")]
+    [LocalizedToolTip("mapping.scaleX.tip")]
     public float HorizontalScale
     {
         get => horizontalScale;
         set => horizontalScale = float.IsFinite(value) ? Math.Clamp(value, 0.5f, 1.5f) : 1f;
     }
 
-    [SliderProperty("Vertical map scale", 0.5f, 1.5f, 1f)]
+    [LocalizedSliderProperty("mapping.scaleY", 0.5f, 1.5f, 1f)]
     [DefaultPropertyValue(1f)]
-    [ToolTip("Overall Y mapping scale around Mapping center Y. 1 is unchanged; above 1 expands vertical travel and below 1 compresses it.")]
+    [LocalizedToolTip("mapping.scaleY.tip")]
     public float VerticalScale
     {
         get => verticalScale;
         set => verticalScale = float.IsFinite(value) ? Math.Clamp(value, 0.5f, 1.5f) : 1f;
     }
 
-    [Property("Horizontal correction grid (25 values)")]
+    [LocalizedProperty("mapping.gridX")]
     [DefaultPropertyValue(NeutralCorrectionSamples)]
-    [ToolTip("Comma-separated horizontal output corrections as percentages of full digitizer width. Enter 25 values in row-major order: X=0,25,50,75,100% across each Y row (Y=0,25,50,75,100%). Values are clamped to +/-10%. Use this field to compensate for horizontal drift that varies by tablet position.")]
+    [LocalizedToolTip("mapping.gridX.tip")]
     public string HorizontalCorrectionSamples
     {
         get => horizontalCorrectionSamples;
@@ -126,9 +127,9 @@ public sealed class TabletSpaceWarpFilter : IPositionedPipelineElement<IDeviceRe
         }
     }
 
-    [Property("Vertical correction grid (25 values)")]
+    [LocalizedProperty("mapping.gridY")]
     [DefaultPropertyValue(NeutralCorrectionSamples)]
-    [ToolTip("Comma-separated vertical output corrections as fractions of full digitizer height, in 25-value row-major order. After calibration, copy the values after VerticalCorrectionSamples= from the OTD daemon console and paste them here to update the visible tablet profile. Calibration also saves and reloads them automatically for this tablet.")]
+    [LocalizedToolTip("mapping.gridY.tip")]
     public string VerticalCorrectionSamples
     {
         get => verticalCorrectionSamples;
@@ -139,18 +140,18 @@ public sealed class TabletSpaceWarpFilter : IPositionedPipelineElement<IDeviceRe
         }
     }
 
-    [SliderProperty("Calibration swipes required", 2f, 8f, 3f)]
+    [LocalizedSliderProperty("mapping.swipes", 2f, 8f, 3f)]
     [DefaultPropertyValue(3f)]
-    [ToolTip("Number of separate tip-down horizontal swipes to average. Lift the pen between swipes. Each accepted swipe must span at least 40% of the digitizer width.")]
+    [LocalizedToolTip("mapping.swipes.tip")]
     public float CalibrationSwipeCount
     {
         get => calibrationSwipeCount;
         set => calibrationSwipeCount = float.IsFinite(value) ? Math.Clamp(MathF.Round(value), 2f, 8f) : 3f;
     }
 
-    [SliderProperty("Calibration contact pressure", 0f, 65535f, 1f)]
+    [LocalizedSliderProperty("mapping.pressure", 0f, 65535f, 1f)]
     [DefaultPropertyValue(1f)]
-    [ToolTip("Minimum raw pen pressure recorded as a tip-down calibration stroke. Increase it if hover movement is being captured; pressure units depend on the tablet.")]
+    [LocalizedToolTip("mapping.pressure.tip")]
     public float CalibrationContactPressure
     {
         get => calibrationContactPressure;

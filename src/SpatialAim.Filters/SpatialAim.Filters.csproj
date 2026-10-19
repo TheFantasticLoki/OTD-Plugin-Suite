@@ -6,9 +6,42 @@
     <LangVersion>latest</LangVersion>
     <RootNamespace>SpatialAim.Filters</RootNamespace>
     <AssemblyName>SpatialAim.Filters</AssemblyName>
+    <SpatialAimLocale Condition="'$(SpatialAimLocale)' == ''">en</SpatialAimLocale>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(SpatialAimLocale)' == 'es'">
+    <DefineConstants>$(DefineConstants);SPATIALAIM_LOCALE_ES</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(SpatialAimLocale)' == 'ja'">
+    <DefineConstants>$(DefineConstants);SPATIALAIM_LOCALE_JA</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(SpatialAimLocale)' == 'zh-CN'">
+    <DefineConstants>$(DefineConstants);SPATIALAIM_LOCALE_ZH_CN</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(SpatialAimLocale)' == 'ko'">
+    <DefineConstants>$(DefineConstants);SPATIALAIM_LOCALE_KO</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(SpatialAimLocale)' == 'de'">
+    <DefineConstants>$(DefineConstants);SPATIALAIM_LOCALE_DE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(SpatialAimLocale)' == 'pl'">
+    <DefineConstants>$(DefineConstants);SPATIALAIM_LOCALE_PL</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(SpatialAimLocale)' == 'fr'">
+    <DefineConstants>$(DefineConstants);SPATIALAIM_LOCALE_FR</DefineConstants>
+  </PropertyGroup>
+
+  <Target Name="ValidateSpatialAimLocale" BeforeTargets="BeforeBuild">
+    <Error Condition="'$(SpatialAimLocale)' != 'en' and '$(SpatialAimLocale)' != 'es' and '$(SpatialAimLocale)' != 'ja' and '$(SpatialAimLocale)' != 'zh-CN' and '$(SpatialAimLocale)' != 'ko' and '$(SpatialAimLocale)' != 'de' and '$(SpatialAimLocale)' != 'pl' and '$(SpatialAimLocale)' != 'fr'"
+           Text="Unsupported SpatialAimLocale '$(SpatialAimLocale)'. Supported values: en, es, ja, zh-CN, ko, de, pl, fr." />
+  </Target>
 
   <ItemGroup>
     <PackageReference Include="OpenTabletDriver.Plugin" Version="0.6.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Localization/catalog.json" />
+    <InternalsVisibleTo Include="SpatialAim.Filters.Tests" />
   </ItemGroup>
 </Project>

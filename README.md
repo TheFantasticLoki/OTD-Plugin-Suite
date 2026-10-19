@@ -31,7 +31,9 @@ dotnet build src/SpatialAim.Filters/SpatialAim.Filters.csproj -c Release
 
 Copy `src/SpatialAim.Filters/bin/Release/net8.0/SpatialAim.Filters.dll` into OpenTabletDriver's user `Plugins` directory, then restart OTD. Add the desired filter in the tablet's Relative Output Mode filter list. See [docs/BUILDING.md](docs/BUILDING.md) for build and installation details and [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for every option and tuning steps.
 
-In VS Code, open **Terminal > Run Task** and choose a `SpatialAim:` task for restore, tests, Debug/Release builds, cleaning, or packaging.
+Filter names, setting labels, and tooltips are available in English, Spanish, Japanese, Simplified Chinese, Korean, German, Polish, and French. OTD 0.6.7 reads plugin attribute text as fixed strings, so choose the locale when building, for example `dotnet build src/SpatialAim.Filters/SpatialAim.Filters.csproj -c Release -p:SpatialAimLocale=fr`. English is the default; see [docs/BUILDING.md](docs/BUILDING.md) for supported locale codes.
+
+In VS Code, open **Terminal > Run Task** and choose a `SpatialAim:` task for restore, tests, Debug/Release builds, building all locales, cleaning, or packaging.
 
 ## Important limits
 

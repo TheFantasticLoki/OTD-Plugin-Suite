@@ -39,6 +39,13 @@
       }
     },
     {
+      "label": "SpatialAim: Build All Locales",
+      "type": "process",
+      "command": "bash",
+      "args": ["scripts/build-locales.sh"],
+      "problemMatcher": "$msCompile"
+    },
+    {
       "label": "SpatialAim: Clean",
       "type": "process",
       "command": "dotnet",

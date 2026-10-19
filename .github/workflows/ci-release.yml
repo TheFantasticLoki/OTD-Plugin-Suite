@@ -3,14 +3,20 @@ name: SpatialAim CI and Release
 on:
   push:
     branches:
+      - Dev
+      - Release
       - dev
       - release
+      - main
     tags:
       - v*
   pull_request:
     branches:
+      - Dev
+      - Release
       - dev
       - release
+      - main
   workflow_dispatch:
 
 concurrency:
@@ -35,23 +41,14 @@ jobs:
       - name: Restore
         run: dotnet restore SpatialAim.Filters.sln
 
-      - name: Test
-        run: dotnet test SpatialAim.Filters.sln --configuration Release --no-restore
-
-      - name: Build
-        run: dotnet build SpatialAim.Filters.sln --configuration Release --no-restore
-
-      - name: Package plugin
-        run: |
-          mkdir -p artifacts/plugin
-          cp src/SpatialAim.Filters/bin/Release/net8.0/SpatialAim.Filters.dll artifacts/plugin/
-          (cd artifacts/plugin && zip -q ../SpatialAim.Filters.zip SpatialAim.Filters.dll)
+      - name: Test and package all locales
+        run: bash scripts/build-locales.sh --no-restore
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: SpatialAim-${{ github.sha }}
-          path: artifacts/SpatialAim.Filters.zip
+          path: artifacts/*.zip
           if-no-files-found: error
           retention-days: 14
 
@@ -70,23 +67,30 @@ jobs:
 
       - name: Require release-branch ancestry
         run: |
-          git fetch origin release:refs/remotes/origin/release
-          git merge-base --is-ancestor "$GITHUB_SHA" origin/release || {
-            echo "Release tags must point to a commit on the release branch."
-            exit 1
-          }
+          git fetch origin --prune
+          for release_ref in refs/remotes/origin/Release refs/remotes/origin/release; do
+            if git show-ref --verify --quiet "$release_ref" &&
+               git merge-base --is-ancestor "$GITHUB_SHA" "$release_ref"; then
+              echo "Tag commit is contained in $release_ref."
+              exit 0
+            fi
+          done
+          echo "Release tags must point to a commit on origin/Release or origin/release."
+          exit 1
 
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: SpatialAim-${{ github.sha }}
           path: artifacts
+          merge-multiple: true
 
       - name: Generate release metadata
         env:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           sha256sum artifacts/SpatialAim.Filters.zip | cut -d ' ' -f 1 > artifacts/SHA256.txt
+          (cd artifacts && sha256sum SpatialAim.Filters*.zip > SHA256SUMS.txt)
           python3 - <<'PY'
           import json
           import os
@@ -107,8 +111,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: >-
           gh release create "$GITHUB_REF_NAME"
-          artifacts/SpatialAim.Filters.zip
+          artifacts/SpatialAim.Filters*.zip
           artifacts/SpatialAim.json
           artifacts/SHA256.txt
+          artifacts/SHA256SUMS.txt
           --title "SpatialAim $GITHUB_REF_NAME"
           --generate-notes
